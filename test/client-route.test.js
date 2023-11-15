@@ -1,5 +1,5 @@
 const request = require('supertest');
-const server = require('../index'); // Importa el servidor en lugar de la aplicación
+const server = require('../index');
 
 describe('Client API Tests with Supertest', () => {
   test('It should return a 200 status code for getting the client list', async () => {
