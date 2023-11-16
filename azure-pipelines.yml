@@ -7,16 +7,9 @@ trigger:
 - main
 
 variables:
-  # Azure Resource Manager connection created during pipeline creation
   azureSubscription: 'bcbe6e1c-2b9b-4fbd-8a8d-9017e8d04c4e'
-
-  # Web app name
   webAppName: 'apireservesfinal'
-
-  # Environment name
   environmentName: 'apireservesfinal'
-
-  # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
 stages:
@@ -53,7 +46,7 @@ stages:
 
 - stage: Deploy
   displayName: Deploy stage
-  dependsOn: Build  # Asegura que la etapa de implementación ocurre después de la etapa de construcción
+  dependsOn: Build
   condition: succeeded()
   jobs:
   - deployment: Deploy
@@ -77,21 +70,25 @@ stages:
 
 - stage: DeployTerraform
   displayName: 'Deploy Infrastructure with Terraform'
-  dependsOn: Deploy  # Asegura que la etapa de Terraform ocurre después de la etapa de implementación
+  dependsOn: Deploy
   jobs:
   - job: DeployTerraform
     displayName: 'Deploy Terraform Infrastructure'
     pool:
       vmImage: $(vmImageName)
-    steps:
-    - task: UseDotNet@2
-      inputs:
-        packageType: 'sdk'
-        version: '2.x'
-        installationPath: $(Agent.ToolsDirectory)/dotnet
+    strategy:
+      runOnce:
+        deploy:
+          maxParallel: 1
+          steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: 'sdk'
+              version: '2.x'
+              installationPath: $(Agent.ToolsDirectory)/dotnet
 
-    - script: |
-        cd terraform
-        terraform init -backend-config=backend-config.tfvars
-        terraform apply -auto-approve
-      displayName: 'Deploy Infrastructure with Terraform'
+          - script: |
+              cd terraform
+              terraform init -backend-config=backend-config.tfvars
+              terraform apply -auto-approve
+            displayName: 'Deploy Infrastructure with Terraform'
