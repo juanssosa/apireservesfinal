@@ -69,7 +69,7 @@ stages:
               startUpCommand: 'npm run start'
 
 - stage: DeployTerraform
-  displayName: 'Deploy Infrastructure with Terraform'
+  displayName: 'Deploy Terraform'
   dependsOn: Deploy
   jobs:
   - job: DeployTerraform
