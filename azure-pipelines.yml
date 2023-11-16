@@ -76,3 +76,23 @@ stages:
               runtimeStack: 'NODE|10.10'
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
               startUpCommand: 'npm run start'
+
+- stage: DeployTerraform
+  displayName: 'Deploy Infrastructure with Terraform'
+  jobs:
+  - job: DeployTerraform
+    displayName: 'Deploy Terraform Infrastructure'
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '2.x'
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+
+    - script: |
+        cd terraform
+        terraform init -backend-config=backend-config.tfvars
+        terraform apply -auto-approve
+      displayName: 'Deploy Infrastructure with Terraform'
