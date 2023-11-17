@@ -1,13 +1,3 @@
-variable "resource_group_name" {
-  description = "Nombre del grupo de recursos"
-  default     = "ApireservesFinal"
-}
-
-variable "location" {
-  description = "Ubicación del grupo de recursos"
-  default     = "eastus"
-}
-
 terraform {
   required_providers {
     azurerm = {
@@ -25,5 +15,5 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg" {
   name     = "myTFResourceGroup"
-  location = "westus2"
+  location = "eastus"
 }
